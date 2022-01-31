@@ -78,6 +78,12 @@ class Customer {
       );
     }
   }
+  static async fullName(id) {
+    const name = await this.get(id);
+    const firstName = name.firstName;
+    const lastName = name.lastName;
+    return `${firstName} ${lastName}`;
+  }
 }
 
 module.exports = Customer;

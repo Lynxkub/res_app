@@ -1,6 +1,7 @@
 /** Routes for Lunchly */
 
 const express = require("express");
+const { fullName } = require("./models/customer");
 
 const Customer = require("./models/customer");
 const Reservation = require("./models/reservation");
@@ -51,10 +52,10 @@ router.post("/add/", async function(req, res, next) {
 router.get("/:id/", async function(req, res, next) {
   try {
     const customer = await Customer.get(req.params.id);
-
+    const name = await Customer.fullName(req.params.id);
     const reservations = await customer.getReservations();
 
-    return res.render("customer_detail.html", { customer, reservations });
+    return res.render("customer_detail.html", { customer , name , reservations });
   } catch (err) {
     return next(err);
   }
@@ -65,8 +66,9 @@ router.get("/:id/", async function(req, res, next) {
 router.get("/:id/edit/", async function(req, res, next) {
   try {
     const customer = await Customer.get(req.params.id);
-
-    res.render("customer_edit_form.html", { customer });
+    const name = await Customer.fullName(req.params.id);
+    
+    res.render("customer_edit_form.html", { name, customer });
   } catch (err) {
     return next(err);
   }
@@ -104,6 +106,7 @@ router.post("/:id/add-reservation/", async function(req, res, next) {
       numGuests,
       notes
     });
+    console.log(reservation);
     await reservation.save();
 
     return res.redirect(`/${customerId}/`);
